@@ -2,7 +2,8 @@ var should = require('should');
 var less = require('../');
 var gutil = require('gulp-util');
 var fs = require('fs');
-var pj = require('path').join;
+var path = require('path');
+var pj = path.join;
 
 function createVinyl(lessFileName, contents) {
   var base = pj(__dirname, 'fixtures');
@@ -129,6 +130,10 @@ describe('gulp-less', function () {
       stream.on('data', function (cssFile) {
         should.exist(cssFile.sourceMap.file);
         should.exist(cssFile.sourceMap.mappings);
+        for (var s = 0; s < cssFile.sourceMap.sources.length; ++s) {
+          s = cssFile.sourceMap.sources[s];
+          should(path.isAbsolute(s)).be.false;
+        }
         should(cssFile.sourceMap.mappings.length).be.greaterThan(1);
       });
       stream.once('end', done);
